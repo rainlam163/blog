@@ -99,6 +99,47 @@ function Example() {
 
 ##### 2) useEffect
 
+- 用法
+
+``` javascript
+useEffect(() => {
+  fetchData(params); // 获取数据
+}, [params]);
+```
+
+- 解析
+
+useEffect 是一个副作用 Hook，我们可以把所有产生副作用的操作都通过这个 Hook 勾进来。什么是副作用呢？数据获取、设置订阅、设置定时器、记录日志以及手动更改 React 组件中的 DOM 都属于副作用。
+
+useEffect 接收 2 个参数，第一个参数是一个函数，函数体是你要进行的副作用操作，第二个参数是一个依赖数组，只有在这个依赖数组的其中任意一个元素发生了变化时，组件重新渲染才会执行副作用操作。如果依赖是一个空数组，那么这个副作用操作只会在组件第一次渲染时执行。
+
+useEffect 的副作用操作如果创建了计时器或者订阅等资源，可以在在副作用操作函数里面返回一个清除函数，这样组件在卸载前就会执行这个清除函数。
+
+- 举个例子
+
+```javascript
+const [ count, setCount ] = useState(0);
+const [ restart, setRestart ] = useState(true);
+
+let interval = null;
+
+useEffect(() => {
+  if (restart) {
+    setCount(0);
+    interval = setInterval(() => {
+      setCount(count + 1);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }
+}, [restart]);
+
+setRestart(false);
+```
+
+上面的例子演示了 useEffect 的使用，每秒钟 count 自动加 1，但当 restart 由 false 变成 true 的时候，会清空 count 并从 0 开始重新计算。当组件即将销毁的时候，会清除计时器。
+
 ##### 3) useContext
 
 #### 2. 额外的 Hook
